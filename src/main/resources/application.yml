@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: chatquest
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/chatquest?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      # IM 场景下长连接较多，连接保活时间要够长
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 50
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.chatquest: DEBUG
+    org.springframework.web.socket: DEBUG
+    # 钉钉 Stream 调试期打开，能看到收发报文
+    com.chatquest.platform.dingtalk: DEBUG
+
+# ============ 平台能力配置 ============
+# ⚠️ 所有密钥类配置一律走环境变量，绝不硬编码进 application.yml
+# 申请方式见 docs/ 下的接入指南
+chatquest:
+  dingtalk:
+    enabled: ${DINGTALK_ENABLED:false}
+    client-id: ${DINGTALK_CLIENT_ID:}
+    client-secret: ${DINGTALK_CLIENT_SECRET:}
+    agent-id: ${DINGTALK_AGENT_ID:}
+  qq:
+    enabled: ${QQ_ENABLED:false}
+    app-id: ${QQ_APP_ID:}
+    client-secret: ${QQ_CLIENT_SECRET:}
+    # 沙箱群 ID，正式环境需申请「开启公共服务」后生效
+    sandbox-groups: ${QQ_SANDBOX_GROUPS:}
+  wecom:
+    enabled: ${WECOM_ENABLED:false}
+  wechat-ilink:
+    enabled: ${WECHAT_ILINK_ENABLED:false}
+    # 扫码授权后生成的凭证，务必不要提交到仓库
+    token-file: ${WECHAT_ILINK_TOKEN_FILE:./.weixin-token.json}
+
+# ============ LLM 抽取配置（第 2 周启用）============
+chatquest.ai:
+  enabled: ${AI_ENABLED:false}
+  # 低于此置信度的任务不自动入库，转卡片人工确认
+  confidence-threshold: 0.7
+  api-key: ${AI_API_KEY:}
