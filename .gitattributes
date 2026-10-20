@@ -1,0 +1,39 @@
+# ---- 换行符统一 ----
+# 入库统一存 LF，检出也统一 LF，避免跨平台协作产生整文件 diff 噪声。
+# 本项目对接四个平台，调试 WebSocket / Stream 报文时 CRLF 会多出 \r，
+# 容易造成字符串匹配失败，统一 LF 可规避这类隐蔽 bug。
+* text=auto eol=lf
+*.java  text eol=lf
+*.md    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.json  text eol=lf
+*.xml   text eol=lf
+*.sql   text eol=lf
+
+# 二进制文件不做换行符转换
+*.png   binary
+*.jpg   binary
+*.gif   binary
+*.ico   binary
+*.jar   binary
+*.zip   binary
+
+# 强制 GitHub Linguist 正确识别语言，避免统计比例失真
+
+*.java          linguist-language=Java
+*.xml           linguist-language=XML
+*.yml           linguist-language=YAML
+*.yaml          linguist-language=YAML
+*.json          linguist-language=JSON
+*.sql           linguist-language=SQL
+*.md            linguist-language=Markdown
+*.http          linguist-language=HTTP
+*.properties    linguist-language=Java Properties
+
+# 文档目录不计入语言统计
+docs/*          linguist-documentation
+docs/**/*       linguist-documentation
+
+# 测试集与配置文件排除
+docs/eval-set.jsonl   linguist-data
